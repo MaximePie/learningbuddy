@@ -19,99 +19,99 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @var string $username
+     * @ORM\Column(type="string", length=180, unique=true)
      */
-    public $username;
+    private $email;
 
     /**
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
+    /**
+     * @var string The hashed password
      * @ORM\Column(type="string")
-     * @var string $password
      */
-    public $password;
-
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
-    private $apiToken;
+    private $password;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
     /**
-     * @return string
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
      */
     public function getUsername(): string
     {
-        return $this->username;
+        return (string) $this->email;
     }
 
     /**
-     * @param string $username
-     * @return User
+     * @see UserInterface
      */
-    public function setUsername(string $username): User
+    public function getRoles(): array
     {
-        $this->username = $username;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
         return $this;
     }
 
     /**
-     * @return string
+     * @see UserInterface
      */
     public function getPassword(): string
     {
-        return $this->password;
+        return (string) $this->password;
     }
 
-    /**
-     * @param string $password
-     * @return User
-     */
-    public function setPassword(string $password): User
+    public function setPassword(string $password): self
     {
         $this->password = $password;
-        return $this;
-    }
 
-    public function __toString()
-    {
-        return "Username : $this->username, Password : $this->password";
-    }
-
-    /**
-     * @param string $apiToken
-     * @return User
-     */
-    public function setApiToken($apiToken): User
-    {
-        $this->apiToken = $apiToken;
         return $this;
     }
 
     /**
-     * @inheritDoc
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @see UserInterface
      */
-    public function getRoles()
+    public function getSalt(): ?string
     {
-        // TODO: Implement getRoles() method.
+        return null;
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getSalt()
-    {
-        // TODO: Implement getSalt() method.
-    }
-
-    /**
-     * @inheritDoc
+     * @see UserInterface
      */
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 }
