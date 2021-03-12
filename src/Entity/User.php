@@ -114,4 +114,14 @@ class User implements UserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
+
+    /**
+     * This method returns the data of the user as an array
+     */
+    public function formatedForView()
+    {
+        return [
+            "email" => $this->getEmail(),
+        ];
+    }
 }

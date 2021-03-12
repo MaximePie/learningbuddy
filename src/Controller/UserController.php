@@ -33,18 +33,20 @@ class UserController extends AbstractController
 
     /**
      * @Route("/", name="users")
-     * @param Request $request
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
-//        $users = $this->repository->findAll();
-//        dump($users);
+        /**
+         * @var $users User[]
+         */
+        $users = $this->repository->findAll();
+        $data = [];
+        foreach($users as $user) {
+            $data[] = $user->formatedForView();
+        }
 
-        $content = $request->getContent();
-        $json = json_decode($content, true);
-        return new JsonResponse($json);
-//        return new JsonResponse([$request]);
+        return new JsonResponse($data);
     }
 
     /**
@@ -65,8 +67,6 @@ class UserController extends AbstractController
          * @var $user User
          */
         $user = new User;
-        $content = $request->getContent();
-        $json = json_decode($content, true);
         $password = RequestService::getFromRequest($request, 'password');
         $password = $passwordEncoder->encodePassword($user, $password);
         $email = RequestService::getFromRequest($request, 'email');
@@ -76,10 +76,8 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(
-            [
-                $user,
-            ]
-        );
+        return new JsonResponse([
+            "code" => 200
+        ]);
     }
 }
