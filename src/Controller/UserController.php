@@ -63,21 +63,19 @@ class UserController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder
     ): Response
     {
-        /**
-         * @var $user User
-         */
         $user = new User;
         $password = RequestService::getFromRequest($request, 'password');
-        $password = $passwordEncoder->encodePassword($user, $password);
+        $encodedPassword = $passwordEncoder->encodePassword($user, $password);
         $email = RequestService::getFromRequest($request, 'email');
 
         $user->setEmail($email)
-            ->setPassword($password);
+            ->setPassword($encodedPassword);
         $entityManager->persist($user);
         $entityManager->flush();
 
         return new JsonResponse([
-            "code" => 200
+            "email" => $email,
+            "password" => $password,
         ]);
     }
 }
